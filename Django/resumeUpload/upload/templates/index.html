@@ -3,21 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Resume Check</title>
+    <title>Resume Check</title> 
 </head>
 <body>
     <h1>Submit Your Information</h1>        
-        <div class="create">
-            <h1> Create Poll</h1>
-            <form method="POST" enctype="multipart/form-data"  class="form">
+    <div class="create">
+        <h1>Create Poll</h1>
+        <form method="POST" enctype="multipart/form-data" class="form" id="pollForm">
             {% csrf_token %}
-                <table>
-                    {{ fm.as_table }}
-                </table>
-                </br>
-                <input type="submit"/>
-            </form>
-            {{ msg }}
-            </div>
+            <table>
+                {{ fm.as_table }}
+            </table>
+            <br>
+            <input type="submit" value="Submit"/>
+        </form>
+        {{ msg }}
+    </div>
 </body>
 </html>
