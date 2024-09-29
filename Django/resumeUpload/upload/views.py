@@ -36,32 +36,34 @@ def get_skills(prompt, text):
         prompt = prompt + text
         return model.generate_content(prompt)
     except Exception as e:
-        print(e)
+        print(f'get_skills:{e}')
         return None
 
 def custom_prompt(prompt, skills, job_title, job_description):
     try:
         return prompt + "\n" + "Resume Skills: " + skills + "\n" + "Job Title: " + job_title + "\n" + "Job Description: " + job_description
     except Exception as e:
-        print(e)
+        print(f'custom_prompt:{e}')
         return None
     
 def gemini(text,job_title, job_description):
     try:
-        prompt_1 = "From the given text extract all the skills and just given the mentioned skills in the text as output and nothing else. Also if the skills are repeated then give only one don't repeat them. Text: "
+        prompt_1 = "From the given text, extract all the skills as a Python list.Return only the list of skills and nothing else. Ensure there are no duplicates."
         skills = get_skills(prompt_1, text)
+        #Modify prompt_2 to return the missing skills as a Python list
         prompt_2 = (
-            "Given a resume, job title, and job description, extract and compare the required skills from both documents. "
-            "First, identify all the skills mentioned in the job description, including technical, soft, and domain-specific skills. "
-            "Then, silently compare the skills with the resume. Do not print the resume skills explicitly. "
-            "Identify and return only the top 5 missing or underdeveloped skills in the resume that are crucial for the job described, "
-            "along with a brief explanation of why they are necessary for the role."
+        "Given a resume, job title, and job description, extract and compare the required skills from both documents. "
+        "First, identify all the skills mentioned in the job description, including technical, soft, and domain-specific skills. "
+        "Then, silently compare the skills with the resume. Do not print the resume skills explicitly. "
+        "Identify and return a list of  only the top 5 missing or underdeveloped skills in the resume that are crucial for the job described, "
+        "along with a brief explanation of why they are necessary for the role."
         )
 
         prompt = custom_prompt(prompt_2, skills.text, job_title, job_description)
-        return [skills.text,model.generate_content(prompt).text]
+
+        return model.generate_content(prompt).text.split("\n")
     except Exception as e:
-        print(e)
+        print(f'gemini:{e}')
         return None
 
 def home(request):
@@ -77,12 +79,14 @@ def home(request):
 
                 # Process the uploaded file directly from request.FILES
                 extracted_text = extract_text_from_file(resume_file)
-                skills, review = gemini(extracted_text,designation_job,description_job)
+                print(f"text: {extracted_text[:50]}")
+                #skills, review = gemini(extracted_text,designation_job,description_job)
+                review = gemini(extracted_text,designation_job,description_job)
                 # Print the inputs (for demonstration)
                 #print(f'Name: {name}, Email: {email}, Job: {goal_job}, Resume: {extracted_text}')
 
                 return render(request, 'response.html', {
-                    'skills': skills,
+                    #'skills': skills,
                     'review': review
                 })
         except Exception as e:
