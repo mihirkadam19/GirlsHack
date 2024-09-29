@@ -62,7 +62,7 @@ def home(request):
                 # Print the inputs (for demonstration)
                 #print(f'Name: {name}, Email: {email}, Job: {goal_job}, Resume: {extracted_text}')
 
-                return render(request, 'index.html', {
+                return render(request, 'response.html', {
                     'msg': msg
                 })
         except Exception as e:
